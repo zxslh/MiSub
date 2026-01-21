@@ -24,6 +24,8 @@ export function useManualNodes(markDirty) {
   const manualNodesCurrentPage = ref(1);
   const manualNodesPerPage = ref(parseInt(localStorage.getItem('manualNodesPPS')) || 24);
   const searchTerm = ref('');
+  const debouncedSearchTerm = ref('');
+  let searchDebounceTimer = null;
 
   watch(manualNodesPerPage, (newVal) => {
     localStorage.setItem('manualNodesPPS', newVal);
@@ -33,12 +35,12 @@ export function useManualNodes(markDirty) {
   const activeColorFilter = ref(null); // null = all, or color string
 
   const filteredManualNodes = computed(() => {
-    return filterManualNodes(manualNodes.value, searchTerm.value, activeColorFilter.value);
+    return filterManualNodes(manualNodes.value, debouncedSearchTerm.value, activeColorFilter.value);
   });
 
   const manualNodesTotalPages = computed(() => {
     if (manualNodesPerPage.value === -1) return 1; // All
-    return Math.ceil(filteredManualNodes.value.length / manualNodesPerPage.value);
+    return Math.max(1, Math.ceil(filteredManualNodes.value.length / manualNodesPerPage.value));
   });
 
   const paginatedManualNodes = computed(() => {
@@ -199,6 +201,21 @@ export function useManualNodes(markDirty) {
     if (newValue !== oldValue) {
       manualNodesCurrentPage.value = 1;
     }
+
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer);
+    }
+
+    searchDebounceTimer = setTimeout(() => {
+      debouncedSearchTerm.value = newValue;
+    }, 200);
+  }, { immediate: true });
+
+  watch(manualNodesTotalPages, (totalPages) => {
+    const safeTotal = totalPages || 1;
+    if (manualNodesCurrentPage.value > safeTotal) {
+      manualNodesCurrentPage.value = safeTotal;
+    }
   });
 
   function reorderManualNodes(newOrder) {
@@ -251,6 +268,8 @@ export function useManualNodes(markDirty) {
     manualNodesCurrentPage,
     manualNodesTotalPages,
     paginatedManualNodes,
+    filteredManualNodes,
+    filteredManualNodesCount: computed(() => filteredManualNodes.value.length),
     enabledManualNodesCount: computed(() => enabledManualNodes.value.length),
     searchTerm,
     activeColorFilter, // New

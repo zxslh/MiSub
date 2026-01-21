@@ -99,9 +99,20 @@ onUnmounted(() => {
         <span class="px-2.5 py-0.5 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700/50 rounded-full">{{ profiles.length }}</span>
       </div>
       <div class="flex items-center gap-2 sm:w-auto justify-end sm:justify-start">
-        <button @click="handleAdd" class="text-sm font-semibold px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-xs shrink-0">新增</button>
+        <button
+          type="button"
+          @click="handleAdd"
+          class="text-sm font-semibold px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-xs shrink-0"
+          aria-label="新增订阅组"
+        >新增</button>
         <div class="relative shrink-0" ref="profilesMoreMenuRef">
-          <button @click="showProfilesMoreMenu = !showProfilesMoreMenu" class="p-2.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+          <button
+            type="button"
+            @click="showProfilesMoreMenu = !showProfilesMoreMenu"
+            class="p-2.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            aria-label="订阅组更多操作"
+            :aria-expanded="showProfilesMoreMenu"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 dark:text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
           </button>
           <!-- 使用Teleport渲染到body，完全避免层级冲突 -->
@@ -115,7 +126,12 @@ onUnmounted(() => {
                 :style="getMenuPosition()"
                 @click.stop
               >
-                <button @click="handleDeleteAll" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10">清空</button>
+                <button
+                  type="button"
+                  @click="handleDeleteAll"
+                  class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10"
+                  aria-label="清空订阅组"
+                >清空</button>
               </div>
             </Transition>
           </Teleport>
@@ -147,9 +163,21 @@ onUnmounted(() => {
         </div>
       </div>
       <div v-if="totalPages > 1 && paginatedProfiles && paginatedProfiles.length > 0" class="flex justify-center items-center space-x-4 mt-8 text-sm font-medium">
-          <button @click="handleChangePage(currentPage - 1)" :disabled="currentPage === 1" class="px-3 py-1 rounded-md disabled:opacity-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">&laquo; 上一页</button>
+          <button
+            type="button"
+            @click="handleChangePage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 rounded-md disabled:opacity-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="上一页"
+          >&laquo; 上一页</button>
           <span class="text-gray-500 dark:text-gray-400">第 {{ currentPage }} / {{ totalPages }} 页</span>
-          <button @click="handleChangePage(currentPage + 1)" :disabled="currentPage === totalPages" class="px-3 py-1 rounded-md disabled:opacity-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">下一页 &raquo;</button>
+          <button
+            type="button"
+            @click="handleChangePage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1 rounded-md disabled:opacity-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="下一页"
+          >下一页 &raquo;</button>
       </div>
     </div>
     <div v-else class="text-center py-12 text-gray-500 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl">

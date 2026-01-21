@@ -127,13 +127,13 @@ async function testNotification() {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bot Token</label>
-        <input type="text" v-model="settings.BotToken"
+        <input type="text" v-model="settings.BotToken" aria-label="Bot Token"
           class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-xl shadow-xs focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white transition-colors">
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">用于推送订阅更新通知</p>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chat ID</label>
-        <input type="text" v-model="settings.ChatID"
+        <input type="text" v-model="settings.ChatID" aria-label="Chat ID"
           class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600 rounded-xl shadow-xs focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white transition-colors">
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">接收通知的聊天 ID</p>
       </div>
@@ -143,8 +143,13 @@ async function testNotification() {
     <!-- Test Button & Result -->
     <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
       <div class="flex items-center gap-4">
-        <button @click="testNotification" :disabled="isTesting || !settings.BotToken || !settings.ChatID"
-          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+        <button
+          type="button"
+          @click="testNotification"
+          :disabled="isTesting || !settings.BotToken || !settings.ChatID"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+          aria-label="测试 Telegram 通知"
+        >
           <svg v-if="isTesting" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -201,7 +206,7 @@ async function testNotification() {
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
             推送 Bot Token
           </label>
-          <input type="text" v-model="telegramPushConfig.bot_token" placeholder="123456:ABC-DEF..."
+          <input type="text" v-model="telegramPushConfig.bot_token" placeholder="123456:ABC-DEF..." aria-label="推送 Bot Token"
             class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white">
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">独立的 Bot，用于接收节点推送</p>
         </div>
@@ -211,7 +216,7 @@ async function testNotification() {
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Webhook Secret（可选）
           </label>
-          <input type="text" v-model="telegramPushConfig.webhook_secret" placeholder="随机字符串"
+          <input type="text" v-model="telegramPushConfig.webhook_secret" placeholder="随机字符串" aria-label="Webhook Secret"
             class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white">
           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">用于验证 Webhook 请求来源</p>
         </div>
@@ -222,7 +227,7 @@ async function testNotification() {
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
           允许的用户 ID（白名单）
         </label>
-        <textarea v-model="allowedUsersStr" rows="2" placeholder="123456789, 987654321"
+        <textarea v-model="allowedUsersStr" rows="2" placeholder="123456789, 987654321" aria-label="允许的用户 ID"
           class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white"></textarea>
         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
           多个 ID 用逗号分隔。只有这些用户可以通过 Bot 推送节点。
@@ -238,10 +243,14 @@ async function testNotification() {
           Webhook URL
         </label>
         <div class="mt-1 flex rounded-md shadow-xs">
-          <input type="text" :value="webhookUrl" readonly
+          <input type="text" :value="webhookUrl" readonly aria-label="Webhook URL"
             class="flex-1 block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-l-md sm:text-sm dark:text-white">
-          <button @click="copyWebhookUrl" type="button"
-            class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-hidden">
+          <button
+            @click="copyWebhookUrl"
+            type="button"
+            class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-hidden"
+            aria-label="复制 Webhook URL"
+          >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -259,10 +268,14 @@ async function testNotification() {
           Webhook 设置链接（自动生成）
         </label>
         <div class="mt-1 flex rounded-md shadow-xs">
-          <input type="text" :value="setWebhookUrl" readonly
+          <input type="text" :value="setWebhookUrl" readonly aria-label="Webhook 设置链接"
             class="flex-1 block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-l-md sm:text-sm dark:text-white font-mono text-xs">
-          <button @click="copySetWebhookUrl" type="button"
-            class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-hidden">
+          <button
+            @click="copySetWebhookUrl"
+            type="button"
+            class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-hidden"
+            aria-label="复制 Webhook 设置链接"
+          >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -282,7 +295,10 @@ async function testNotification() {
 
       <!-- 快速帮助 -->
       <div class="flex flex-col sm:flex-row gap-2">
-        <button @click="showSetupGuide = !showSetupGuide" type="button"
+        <button
+          @click="showSetupGuide = !showSetupGuide"
+          type="button"
+          :aria-expanded="showSetupGuide"
           class="flex items-center justify-center sm:justify-start gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors flex-1"
           :class="showSetupGuide
             ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300'
@@ -299,7 +315,10 @@ async function testNotification() {
           </svg>
         </button>
 
-        <button @click="showUsageGuide = !showUsageGuide" type="button"
+        <button
+          @click="showUsageGuide = !showUsageGuide"
+          type="button"
+          :aria-expanded="showUsageGuide"
           class="flex items-center justify-center sm:justify-start gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors flex-1"
           :class="showUsageGuide
             ? 'bg-green-50 dark:bg-green-900/30 border-green-300 dark:border-green-700 text-green-700 dark:text-green-300'

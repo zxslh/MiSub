@@ -74,9 +74,11 @@ const goToPage = (page) => {
       <div class="flex items-center space-x-2">
         <!-- 上一页 -->
         <button
+          type="button"
           @click="goToPage(currentPage - 1)"
           :disabled="currentPage <= 1"
           class="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          aria-label="上一页"
         >
           上一页
         </button>
@@ -86,6 +88,7 @@ const goToPage = (page) => {
           <button
             v-for="page in pageNumbers"
             :key="page"
+            type="button"
             @click="page !== '...' && goToPage(page)"
             :class="{
               'px-3 py-1 rounded-md border text-sm font-medium transition-colors': true,
@@ -94,6 +97,7 @@ const goToPage = (page) => {
               'opacity-50 cursor-not-allowed': page === '...'
             }"
             :disabled="page === '...'"
+            :aria-current="page === currentPage ? 'page' : undefined"
           >
             {{ page }}
           </button>
@@ -101,9 +105,11 @@ const goToPage = (page) => {
 
         <!-- 下一页 -->
         <button
+          type="button"
           @click="goToPage(currentPage + 1)"
           :disabled="currentPage >= totalPages"
           class="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          aria-label="下一页"
         >
           下一页
         </button>
@@ -122,9 +128,11 @@ const goToPage = (page) => {
       </div>
       <div class="flex items-center justify-center space-x-4">
         <button
+          type="button"
           @click="goToPage(currentPage - 1)"
           :disabled="currentPage <= 1"
           class="flex-1 max-w-[100px] px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          aria-label="上一页"
         >
           上一页
         </button>
@@ -132,9 +140,11 @@ const goToPage = (page) => {
           {{ currentPage }}
         </span>
         <button
+          type="button"
           @click="goToPage(currentPage + 1)"
           :disabled="currentPage >= totalPages"
           class="flex-1 max-w-[100px] px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          aria-label="下一页"
         >
           下一页
         </button>

@@ -31,6 +31,7 @@ const toggle = () => {
       class="sr-only peer" 
       :checked="modelValue" 
       :disabled="disabled"
+      :aria-label="label || '切换'"
       @change="toggle"
     >
     <div 

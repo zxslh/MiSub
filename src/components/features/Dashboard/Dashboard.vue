@@ -33,8 +33,7 @@ const SubscriptionImportModal = defineAsyncComponent(() => import('../../modals/
 const LogModal = defineAsyncComponent(() => import('../../modals/LogModal.vue'));
 const NodePreviewModal = defineAsyncComponent(() => import('../../modals/NodePreview/NodePreviewModal.vue'));
 
-// --- 基礎 Props 和狀態 ---
-const props = defineProps({ data: Object });
+// --- 基础状态 ---
 const { showToast } = useToastStore();
 const uiStore = useUIStore();
 const dataStore = useDataStore();
@@ -68,7 +67,8 @@ const {
 } = useSubscriptions(markDirty);
 
 const {
-  manualNodes, manualNodesCurrentPage, manualNodesTotalPages, paginatedManualNodes, searchTerm,
+  manualNodes, manualNodesCurrentPage, manualNodesTotalPages, paginatedManualNodes, filteredManualNodes,
+  searchTerm, manualNodesPerPage,
   changeManualNodesPage, addNode, updateNode, deleteNode, deleteAllNodes,
   addNodesFromBulk, autoSortNodes, deduplicateNodes,
   reorderManualNodes, activeColorFilter, setColorFilter, batchUpdateColor, batchDeleteNodes, buildDedupPlan, applyDedupPlan
@@ -334,19 +334,23 @@ import DashboardBanner from './DashboardBanner.vue';
 
         <!-- Manual Node Panel -->
         <ManualNodePanel :manual-nodes="manualNodes" :paginated-manual-nodes="paginatedManualNodes"
+          :filtered-manual-nodes="filteredManualNodes"
           :current-page="manualNodesCurrentPage" :total-pages="manualNodesTotalPages" :is-sorting="isSortingNodes"
           :search-term="searchTerm" :view-mode="manualNodeViewMode" :active-color-filter="activeColorFilter"
+          :items-per-page="manualNodesPerPage"
           @add="handleAddNode" @delete="handleDeleteNodeWithCleanup"
           @edit="(id) => handleEditNode(manualNodes.find(n => n.id === id))" @change-page="changeManualNodesPage"
           @update:search-term="newVal => searchTerm.value = newVal" @update:view-mode="setViewMode"
           @toggle-sort="isSortingNodes = !isSortingNodes" @mark-dirty="markDirty" @auto-sort="handleAutoSortNodes"
           @deduplicate="handleDeduplicateNodes" @import="showSubscriptionImportModal = true"
           @delete-all="showDeleteNodesModal = true" @reorder="reorderManualNodes" @set-color-filter="setColorFilter"
-          @batch-update-color="batchUpdateColor" @batch-delete-nodes="handleBatchDeleteRequest" />
+          @batch-update-color="batchUpdateColor" @batch-delete-nodes="handleBatchDeleteRequest"
+          @update:items-per-page="manualNodesPerPage.value = $event"
+        />
       </div>
 
       <!-- Right Column -->
-      <div class="lg:col-span-1 space-y-8">
+      <div class="lg:col-span-1 md:col-span-2 space-y-8">
         <RightPanel :config="config" :profiles="profiles" />
         <ProfilePanel :profiles="profiles" @add="handleAddProfile" @edit="handleEditProfile"
           @delete="handleDeleteProfile" @deleteAll="showDeleteProfilesModal = true" @toggle="handleProfileToggle"

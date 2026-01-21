@@ -81,12 +81,12 @@ const ICONS = {
             </div>
 
             <!-- 内容区域 -->
-            <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+            <div class="flex flex-col xl:flex-row items-center gap-8 xl:gap-16">
 
                 <!-- 左侧信息 -->
-                <div class="flex-1 text-center lg:text-left">
+                <div class="flex-1 text-center xl:text-left">
                     <!-- 图标和标题 -->
-                    <div class="flex flex-col lg:flex-row items-center lg:items-start gap-6 mb-8">
+                    <div class="flex flex-col xl:flex-row items-center xl:items-start gap-6 mb-8">
                         <div
                             class="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center shadow-lg shadow-primary-500/30 shrink-0 transform hover:scale-105 transition-transform duration-500">
                             <span class="text-4xl drop-shadow-md">🚀</span>
@@ -104,19 +104,31 @@ const ICONS = {
 
 
                     <!-- 操作按钮 -->
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-4">
-                        <button @click="emit('quick-import', profile)"
-                            class="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-500 hover:to-purple-500 text-white font-bold rounded-2xl shadow-xl shadow-primary-500/30 transition-all hover:-translate-y-1 hover:scale-105 active:scale-95">
+                    <div class="flex flex-wrap justify-center xl:justify-start gap-4">
+                        <button
+                            type="button"
+                            @click="emit('quick-import', profile)"
+                            class="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-500 hover:to-purple-500 text-white font-bold rounded-2xl shadow-xl shadow-primary-500/30 transition-all hover:-translate-y-1 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
+                            aria-label="一键导入"
+                        >
                             <BaseIcon :path="ICONS.import" className="w-5 h-5 mr-2" />
                             一键导入
                         </button>
-                        <button @click="emit('preview', profile)"
-                            class="inline-flex items-center px-6 py-3.5 bg-white/80 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200 font-bold rounded-2xl hover:bg-white dark:hover:bg-white/20 transition-all hover:-translate-y-0.5 active:scale-95 backdrop-blur-sm">
+                        <button
+                            type="button"
+                            @click="emit('preview', profile)"
+                            class="inline-flex items-center px-6 py-3.5 bg-white/80 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200 font-bold rounded-2xl hover:bg-white dark:hover:bg-white/20 transition-all hover:-translate-y-0.5 active:scale-95 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
+                            aria-label="预览节点"
+                        >
                             <BaseIcon :path="ICONS.preview" className="w-5 h-5 mr-2" />
                             预览节点
                         </button>
-                        <button @click="emit('copy-link', profile)"
-                            class="inline-flex items-center px-6 py-3.5 bg-white/80 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200 font-bold rounded-2xl hover:bg-white dark:hover:bg-white/20 transition-all hover:-translate-y-0.5 active:scale-95 backdrop-blur-sm">
+                        <button
+                            type="button"
+                            @click="emit('copy-link', profile)"
+                            class="inline-flex items-center px-6 py-3.5 bg-white/80 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200 font-bold rounded-2xl hover:bg-white dark:hover:bg-white/20 transition-all hover:-translate-y-0.5 active:scale-95 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
+                            aria-label="复制链接"
+                        >
                             <BaseIcon :path="ICONS.link" className="w-5 h-5 mr-2" />
                             复制链接
                         </button>
@@ -125,8 +137,14 @@ const ICONS = {
 
                 <!-- 右侧二维码区域 -->
                 <div class="flex flex-col items-center">
-                    <div @click="toggleQR"
-                        class="relative w-56 h-56 bg-white/50 dark:bg-gray-800/50 rounded-3xl shadow-lg border-2 border-dashed border-gray-200 dark:border-gray-600 flex items-center justify-center cursor-pointer hover:border-primary-400 dark:hover:border-primary-500 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all group backdrop-blur-sm">
+                    <div
+                        role="button"
+                        tabindex="0"
+                        @click="toggleQR"
+                        @keydown.enter.prevent="toggleQR"
+                        @keydown.space.prevent="toggleQR"
+                        aria-label="切换二维码"
+                        class="relative w-56 h-56 bg-white/50 dark:bg-gray-800/50 rounded-3xl shadow-lg border-2 border-dashed border-gray-200 dark:border-gray-600 flex items-center justify-center cursor-pointer hover:border-primary-400 dark:hover:border-primary-500 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all group backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50">
 
                         <!-- 未展开状态 -->
                         <div v-if="!showQR" class="text-center">

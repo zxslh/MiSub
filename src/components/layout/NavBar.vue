@@ -60,6 +60,7 @@ const navItems = [
           v-for="item in navItems" 
           :key="item.path" 
           :to="item.path"
+          :aria-current="route.path === item.path ? 'page' : undefined"
           class="relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 group"
           :class="[
             route.path === item.path 
@@ -108,6 +109,7 @@ const navItems = [
             v-for="item in navItems" 
             :key="item.path" 
             :to="item.path"
+            :aria-current="route.path === item.path ? 'page' : undefined"
             class="flex flex-col items-center justify-center w-full h-full gap-1 rounded-xl transition-all duration-300 tap-effect"
             :class="route.path === item.path ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'"
           >
@@ -141,11 +143,12 @@ const navItems = [
         
         <div class="flex items-center gap-2">
              <ThemeToggle :theme="theme" @toggle="toggleTheme" />
-             <button 
-               @click="emit('logout')" 
-               class="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-colors"
-               aria-label="退出登录"
-             >
+              <button 
+                type="button"
+                @click="emit('logout')" 
+                class="p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
+                aria-label="退出登录"
+              >
                 <BaseIcon :path="ICONS.logout" className="h-5 w-5" />
              </button>
         </div>

@@ -1,13 +1,14 @@
 <script setup>
-import { defineAsyncComponent, onMounted, watch, computed } from 'vue'; // [UPDATED] added computed
-import { useRoute } from 'vue-router';
-import { useThemeStore } from './stores/theme';
-import { useSessionStore } from './stores/session';
-import { useToastStore } from './stores/toast';
-import { useDataStore } from './stores/useDataStore';
-import { useUIStore } from './stores/ui';
+import { computed, defineAsyncComponent, onMounted, watch } from 'vue'; // [UPDATED] added computed
+import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import { useDataStore } from './stores/useDataStore';
+import { useSessionStore } from './stores/session';
+import { useThemeStore } from './stores/theme';
+import { useToastStore } from './stores/toast';
+import { useUIStore } from './stores/ui';
 import NavBar from './components/layout/NavBar.vue';
+import LoadingSpinner from './components/ui/LoadingSpinner.vue';
 
 // Lazy components
 const Login = defineAsyncComponent(() => import('./components/modals/Login.vue'));
@@ -20,6 +21,7 @@ const Dashboard = defineAsyncComponent(() => import('./components/features/Dashb
 const Header = defineAsyncComponent(() => import('./components/layout/Header.vue'));
 
 const route = useRoute();
+const router = useRouter();
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 const { initTheme } = themeStore;
@@ -66,16 +68,34 @@ onMounted(async () => {
 
 watch(sessionState, async (newVal) => {
   if (newVal === 'loggedIn') {
-    await dataStore.fetchData();
+    try {
+      await dataStore.fetchData();
+    } catch (error) {
+      // 错误提示已由 dataStore 处理
+    }
+  }
+}, { immediate: true });
+
+watch([sessionState, isPublicRoute], ([newState, isPublic]) => {
+  if (newState === 'loggedOut' && !isPublic) {
+    router.replace('/');
   }
 }, { immediate: true });
 
 const handleSave = async () => {
-   await dataStore.saveData();
+  try {
+    await dataStore.saveData();
+  } catch (error) {
+    // 错误提示已由 dataStore 处理
+  }
 };
 const handleDiscard = async () => {
-   await dataStore.fetchData(true);
-   toastStore.showToast('已放弃所有未保存的更改');
+  try {
+    await dataStore.fetchData(true);
+    toastStore.showToast('已放弃所有未保存的更改');
+  } catch (error) {
+    toastStore.showToast(`放弃更改失败: ${error.message}`, 'error');
+  }
 };
 
 </script>
@@ -101,7 +121,9 @@ const handleDiscard = async () => {
       class="grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
       :class="{ 'flex items-center justify-center': shouldCenterMain }"
     >
-      <div v-if="sessionState === 'loading'" class="flex justify-center p-8">Loading...</div>
+      <div v-if="sessionState === 'loading'" class="flex justify-center p-8">
+        <LoadingSpinner type="spinner" size="md" color="indigo" message="正在加载..." />
+      </div>
       
       <!-- LOGGED IN VIEW -->
       <template v-else-if="isLoggedIn">
@@ -119,33 +141,51 @@ const handleDiscard = async () => {
                 </div>
 
                 <div class="flex items-center gap-1">
-                    <button v-if="saveState !== 'success'" @click="handleDiscard" class="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/10">
+                    <button v-if="saveState !== 'success'" @click="handleDiscard" class="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/10 whitespace-nowrap">
                         放弃
                     </button>
-                    <button @click="handleSave" :disabled="saveState !== 'idle'" class="px-4 py-1.5 text-xs font-bold bg-primary-600 hover:bg-primary-500 text-white rounded-full shadow-lg shadow-primary-500/30 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none">
+                    <button @click="handleSave" :disabled="saveState !== 'idle'" class="px-4 py-1.5 text-xs font-bold bg-primary-600 hover:bg-primary-500 text-white rounded-full shadow-lg shadow-primary-500/30 transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none whitespace-nowrap">
                         {{ saveState === 'saving' ? '保存中...' : (saveState === 'success' ? '完成' : '立即保存') }}
                     </button>
                 </div>
             </div>
           </Transition>
 
-          <router-view v-if="layoutMode === 'modern'" v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
+          <Suspense v-if="layoutMode === 'modern'">
+            <template #default>
+              <router-view v-slot="{ Component }">
+                <transition name="fade" mode="out-in">
+                  <component :is="Component" />
+                </transition>
+              </router-view>
+            </template>
+            <template #fallback>
+              <div class="flex justify-center py-12">
+                <LoadingSpinner type="spinner" size="md" color="indigo" message="页面加载中..." />
+              </div>
+            </template>
+          </Suspense>
 
           <Dashboard v-else />
       </template>
 
       <!-- PUBLIC ROUTE VIEW (Not logged in, but isPublic) -->
-      <template v-else-if="isPublicRoute">
-         <router-view v-slot="{ Component }">
-            <transition name="fade" mode="out-in">
-              <component :is="Component" />
-            </transition>
-          </router-view>
-      </template>
+       <template v-else-if="isPublicRoute">
+         <Suspense>
+           <template #default>
+             <router-view v-slot="{ Component }">
+               <transition name="fade" mode="out-in">
+                 <component :is="Component" />
+               </transition>
+             </router-view>
+           </template>
+           <template #fallback>
+             <div class="flex justify-center py-12">
+               <LoadingSpinner type="spinner" size="md" color="indigo" message="页面加载中..." />
+             </div>
+           </template>
+         </Suspense>
+       </template>
       
       <!-- LOGIN VIEW (Not logged in, not public) -->
       <template v-else>

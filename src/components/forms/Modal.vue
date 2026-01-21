@@ -81,12 +81,19 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
 
           <div class="p-6 pt-4 flex justify-end space-x-3 shrink-0 border-t border-gray-200 dark:border-gray-700">
             <slot name="footer">
-              <button @click="emit('update:show', false)" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold text-sm rounded-xl transition-colors">{{ cancelText }}</button>
+              <button
+                type="button"
+                @click="emit('update:show', false)"
+                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold text-sm rounded-xl transition-colors"
+                :aria-label="cancelText"
+              >{{ cancelText }}</button>
               <button 
+                  type="button"
                   @click="handleConfirm" 
                   :disabled="confirmDisabled || (confirmKeyword && confirmInput !== confirmKeyword)"
                   :title="confirmDisabled ? confirmButtonTitle : '确认'"
                   class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-colors disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:opacity-70 disabled:cursor-not-allowed"
+                  :aria-label="confirmText"
               >{{ confirmText }}</button>
             </slot>
           </div>

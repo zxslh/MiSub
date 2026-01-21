@@ -94,8 +94,13 @@ async function testSubconverter() {
     <!-- 测试按钮区域 -->
     <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
       <div class="flex items-center gap-4 flex-wrap">
-        <button @click="testSubconverter" :disabled="isTesting || !settings.subConverter"
-          class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+        <button
+          type="button"
+          @click="testSubconverter"
+          :disabled="isTesting || !settings.subConverter"
+          class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+          aria-label="测试 SubConverter 可用性"
+        >
           <svg v-if="isTesting" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -1,43 +1,34 @@
 <template>
   <div class="entrance-container">
-     <!-- If access is allowed (Login), the component renders differently via the component map or state -->
-     <!-- Actually, we redirect or render component based on check -->
-     <component :is="activeComponent" v-bind="componentProps" />
+     <LoadingSpinner v-if="isLoading" type="spinner" size="md" color="indigo" message="正在加载..." />
+     <component v-else :is="activeComponent" v-bind="componentProps" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineAsyncComponent, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useSessionStore } from '../stores/session';
+import { computed, defineAsyncComponent, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import { useSessionStore } from '../stores/session';
+import LoadingSpinner from '../components/ui/LoadingSpinner.vue';
 
 // Lazy load components
 const Login = defineAsyncComponent(() => import('../components/modals/Login.vue'));
 const NotFound = defineAsyncComponent(() => import('./NotFound.vue'));
 
 const route = useRoute();
-const router = useRouter();
 const sessionStore = useSessionStore();
-const { publicConfig, initialData } = storeToRefs(sessionStore); // Ensure publicConfig contains settings or we need to access settings differently
+const { publicConfig, isConfigReady, sessionState } = storeToRefs(sessionStore);
 
 const activeComponent = ref(null);
 const componentProps = ref({});
+const isLoading = computed(() => !isConfigReady.value || sessionState.value === 'loading');
 
-onMounted(async () => {
-    // Determine what to show
-    checkPath();
-});
-
-// Watch for path changes if component is reused
-watch(() => route.path, () => {
-    checkPath();
-});
-
-// Watch for config loaded
-watch(publicConfig, () => {
-    checkPath();
-});
+watch([() => route.path, publicConfig, isConfigReady], () => {
+    if (isConfigReady.value) {
+        checkPath();
+    }
+}, { immediate: true });
 
 async function checkPath() {
     // 1. Get Configured Path

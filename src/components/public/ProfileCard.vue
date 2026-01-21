@@ -39,9 +39,11 @@ const ICONS = {
     <div class="absolute top-5 right-5 flex gap-2">
       <!-- Quick Import Button -->
       <button
+        type="button"
         @click="emit('quick-import', profile)"
-        class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-500/30 transition-all hover:scale-110 group/import"
+        class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-500/30 transition-all hover:scale-110 group/import focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
         title="一键导入"
+        aria-label="一键导入"
       >
         <BaseIcon :path="ICONS.import" className="w-5 h-5" />
         <span
@@ -53,10 +55,12 @@ const ICONS = {
 
       <!-- QR Code Button -->
       <button
+        type="button"
         @click="emit('toggle-qr', profile)"
-        class="w-10 h-10 flex items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/10 border border-teal-100 dark:border-teal-500/20 text-teal-600 dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-500/30 transition-all hover:scale-110 group/qr"
+        class="w-10 h-10 flex items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-500/10 border border-teal-100 dark:border-teal-500/20 text-teal-600 dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-500/30 transition-all hover:scale-110 group/qr focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/50"
         :class="{ 'bg-teal-100 dark:bg-teal-500/30': isQrExpanded }"
         title="查看二维码"
+        :aria-label="isQrExpanded ? '收起二维码' : '查看二维码'"
       >
         <BaseIcon :path="ICONS.qr" className="w-5 h-5" />
         <span
@@ -90,15 +94,19 @@ const ICONS = {
 
     <div class="grid grid-cols-2 gap-3">
       <button
+        type="button"
         @click="emit('preview', profile)"
-        class="flex items-center justify-center px-4 py-3 border border-primary-200 dark:border-primary-500/30 text-sm font-bold rounded-xl text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-500/10 hover:bg-primary-100 dark:hover:bg-primary-500/20 transition-all active:scale-95"
+        class="flex items-center justify-center px-4 py-3 border border-primary-200 dark:border-primary-500/30 text-sm font-bold rounded-xl text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-500/10 hover:bg-primary-100 dark:hover:bg-primary-500/20 transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
+        aria-label="预览节点"
       >
         <BaseIcon :path="ICONS.preview" className="w-5 h-5 mr-1.5" />
         预览节点
       </button>
       <button
+        type="button"
         @click="emit('copy-link', profile)"
-        class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 shadow-lg shadow-primary-500/30 transition-all hover:-translate-y-0.5 active:scale-95"
+        class="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 shadow-lg shadow-primary-500/30 transition-all hover:-translate-y-0.5 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
+        aria-label="复制链接"
       >
         <BaseIcon :path="ICONS.link" className="w-5 h-5 mr-1.5" />
         复制链接

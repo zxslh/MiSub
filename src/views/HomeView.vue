@@ -1,7 +1,7 @@
 <script setup>
 import { defineAsyncComponent, computed } from 'vue';
-import { useSessionStore } from '../stores/session';
 import { storeToRefs } from 'pinia';
+import { useSessionStore } from '../stores/session';
 
 // Lazy load components
 const DashboardView = defineAsyncComponent(() => import('./DashboardView.vue'));
@@ -10,9 +10,6 @@ const NotFoundView = defineAsyncComponent(() => import('./NotFound.vue')); // [N
 
 const sessionStore = useSessionStore();
 const { sessionState, publicConfig } = storeToRefs(sessionStore);
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
 
 const currentView = computed(() => {
     // If logged using 'loggedIn' state, show Dashboard

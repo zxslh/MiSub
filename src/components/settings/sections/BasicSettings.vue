@@ -75,14 +75,15 @@ import Switch from '../../ui/Switch.vue';
           </div>
           <div class="flex flex-wrap gap-2">
             <div class="flex items-center gap-1">
-              <input
-                type="number"
-                :value="![0, 30, 60, 120].includes(settings.autoUpdateInterval) ? settings.autoUpdateInterval : ''"
-                @input="e => { const v = parseInt(e.target.value); if (v >= 5) settings.autoUpdateInterval = v; }"
-                placeholder="自定义"
-                min="5"
-                class="w-20 px-2 py-1.5 text-xs bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none transition-all"
-              >
+            <input
+              type="number"
+              :value="![0, 30, 60, 120].includes(settings.autoUpdateInterval) ? settings.autoUpdateInterval : ''"
+              @input="e => { const v = parseInt(e.target.value); if (v >= 5) settings.autoUpdateInterval = v; }"
+              placeholder="自定义"
+              min="5"
+              aria-label="自定义自动更新间隔"
+              class="w-20 px-2 py-1.5 text-xs bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none transition-all"
+            >
               <span class="text-xs text-gray-500 dark:text-gray-400">分钟</span>
             </div>
             <button
@@ -93,6 +94,7 @@ import Switch from '../../ui/Switch.vue';
                 { value: 120, label: '2小时' }
               ]"
               :key="option.value"
+              type="button"
               @click="settings.autoUpdateInterval = option.value"
               :class="[
                 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors',
@@ -100,6 +102,7 @@ import Switch from '../../ui/Switch.vue';
                   ? 'bg-indigo-600 text-white'
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
               ]"
+              :aria-pressed="settings.autoUpdateInterval === option.value"
             >
               {{ option.label }}
             </button>

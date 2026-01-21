@@ -41,6 +41,7 @@ const handleGuestbookTrigger = () => {
 const fetchPublicProfiles = async () => {
     try {
         loading.value = true;
+        error.value = null;
         const data = await api.get('/api/public/profiles');
         if (data.success) {
             publicProfiles.value = data.data;
@@ -64,7 +65,7 @@ const copyLink = async (profile) => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
             await navigator.clipboard.writeText(link);
-            showToast('订阅链接已复制d', 'success');
+            showToast('订阅链接已复制', 'success');
         } catch (e) {
             showToast('复制失败，请手动复制', 'error');
         }
@@ -87,15 +88,25 @@ const copyLink = async (profile) => {
 };
 
 const clients = ref([]);
+const clientsLoading = ref(false);
+const clientsLoaded = ref(false);
+const clientsSectionRef = ref(null);
+const profilesReady = computed(() => !loading.value && !error.value);
+const profileCount = computed(() => publicProfiles.value.length);
+const clientCount = computed(() => clients.value.length);
 
 const fetchClients = async () => {
     try {
+        clientsLoading.value = true;
         const data = await api.get('/api/clients');
         if (data.success && data.data && data.data.length > 0) {
             clients.value = data.data;
         }
     } catch (e) {
         console.error('Failed to fetch clients', e);
+    } finally {
+        clientsLoading.value = false;
+        clientsLoaded.value = true;
     }
 };
 
@@ -119,9 +130,30 @@ const getPlatformLabel = (p) => {
         macos: 'macOS',
         linux: 'Linux',
         android: 'Android',
-        ios: 'iOS'
+        ios: 'iOS',
+        HarmonyOS: 'HarmonyOS'
     };
     return map[p] || p;
+};
+
+const scheduleClientVersionFetch = () => {
+    if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(() => fetchClientVersions());
+    } else {
+        setTimeout(fetchClientVersions, 800);
+    }
+};
+
+const loadClientsSection = async () => {
+    if (clientsLoaded.value || clientsLoading.value) return;
+    await fetchClients();
+    scheduleClientVersionFetch();
+};
+
+const scrollToSection = (sectionId) => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 const showPreviewModal = ref(false);
@@ -207,8 +239,22 @@ const ICONS = {
 
 onMounted(async () => {
     fetchPublicProfiles();
-    await fetchClients();
-    fetchClientVersions();
+    if (typeof IntersectionObserver !== 'undefined') {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some(entry => entry.isIntersecting)) {
+                    loadClientsSection();
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '200px' }
+        );
+        if (clientsSectionRef.value) {
+            observer.observe(clientsSectionRef.value);
+        }
+    } else {
+        loadClientsSection();
+    }
 });
 </script>
 
@@ -249,9 +295,35 @@ onMounted(async () => {
                         </span>
                     </h1>
                     
-                    <p class="text-base md:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-medium max-w-3xl mb-6 whitespace-nowrap overflow-hidden text-ellipsis">
+                    <p class="text-base md:text-lg text-gray-500 dark:text-gray-400 leading-relaxed font-medium max-w-2xl mb-8">
                         {{ heroConfig.description }}
                     </p>
+
+                    <div class="flex flex-wrap gap-4 mb-10">
+                        <button type="button" @click="scrollToSection('public-profiles')"
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl shadow-lg shadow-gray-900/20 hover:-translate-y-0.5 transition-all active:scale-95">
+                            <span class="text-sm font-semibold">浏览订阅</span>
+                        </button>
+                        <button type="button" @click="scrollToSection('public-clients')"
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-white/70 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-200 rounded-2xl shadow-sm hover:-translate-y-0.5 transition-all active:scale-95">
+                            <span class="text-sm font-semibold">推荐客户端</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-xl">
+                        <div class="glass-panel dark:bg-white/5 backdrop-blur-xl px-4 py-3 rounded-2xl">
+                            <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">公开订阅</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ profileCount }}</p>
+                        </div>
+                        <div class="glass-panel dark:bg-white/5 backdrop-blur-xl px-4 py-3 rounded-2xl">
+                            <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">推荐客户端</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ clientCount }}</p>
+                        </div>
+                        <div class="glass-panel dark:bg-white/5 backdrop-blur-xl px-4 py-3 rounded-2xl">
+                            <p class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">导入方式</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">QR / Link</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Content: Top-Right Concentric Circles (Bottom-Left Quadrant) -->
@@ -338,13 +410,14 @@ onMounted(async () => {
             </div>
 
             <!-- Profile Grid -->
-            <ProfileGrid v-else :profiles="publicProfiles" :is-qr-expanded="isQRExpanded"
+            <ProfileGrid v-else id="public-profiles" :profiles="publicProfiles" :is-qr-expanded="isQRExpanded"
+                :class="{ 'fade-rise-in': profilesReady }"
                 :profile-token="config.profileToken || 'profiles'" @quick-import="handleQuickImport"
                 @toggle-qr="toggleQRCode" @preview="handlePreview" @copy-link="copyLink" @download-qr="downloadQRCode"
                 @register-canvas="registerQrCanvas" />
 
             <!-- Clients Section -->
-            <div class="mt-32 mb-20">
+            <div id="public-clients" ref="clientsSectionRef" class="mt-32 mb-20">
                 <div class="text-center mb-16 relative">
                     <div class="absolute inset-0 flex items-center" aria-hidden="true">
                         <div class="w-full border-t border-gray-200 dark:border-gray-800"></div>
@@ -357,7 +430,17 @@ onMounted(async () => {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div v-if="clientsLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="i in 3" :key="i"
+                        class="h-[240px] bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse">
+                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg w-1/2 mb-4"></div>
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-3"></div>
+                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-8"></div>
+                        <div class="h-8 bg-gray-100 dark:bg-gray-700/50 rounded-xl"></div>
+                    </div>
+                </div>
+
+                <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <div v-for="client in clients" :key="client.name"
                         class="group relative glass-panel dark:bg-white/5 backdrop-blur-xl rounded-3xl p-8 hover:shadow-2xl hover:border-primary-500/20 transition-all duration-300 transform hover:-translate-y-1">
                         
@@ -434,6 +517,15 @@ onMounted(async () => {
 }
 .animation-delay-2000 {
     animation-delay: 2s;
+}
+
+@keyframes fade-rise {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.fade-rise-in {
+    animation: fade-rise 0.6s ease-out;
 }
 
 /* Custom Scrollbar for nicer feel */

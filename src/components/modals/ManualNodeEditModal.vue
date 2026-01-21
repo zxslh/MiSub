@@ -189,8 +189,10 @@ const protocolColorMap = {
             <div v-if="suggestedName && !editingNode.name" class="mt-1.5 flex items-center gap-1.5 ml-1">
               <span class="text-xs text-gray-500 dark:text-gray-400">建议：</span>
               <button 
+                type="button"
                 @click="applySuggestedName"
                 class="text-xs text-indigo-500 hover:text-indigo-600 font-medium flex items-center gap-1 hover:underline"
+                aria-label="应用建议名称"
               >
                 {{ suggestedName }}
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -211,6 +213,7 @@ const protocolColorMap = {
                   <button
                     v-for="color in ['red', 'orange', 'green', 'blue']"
                     :key="color"
+                    type="button"
                     @click="editingNode.colorTag = editingNode.colorTag === color ? null : color"
                     class="w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center hover:scale-110"
                     :class="[
@@ -220,6 +223,8 @@ const protocolColorMap = {
                       colorMap[color],
                       editingNode.colorTag === color ? `ring-${color}-500` : ''
                     ]"
+                    :aria-label="`选择颜色 ${color}`"
+                    :aria-pressed="editingNode.colorTag === color"
                   >
                     <svg v-if="editingNode.colorTag === color" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white drop-shadow" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -228,8 +233,10 @@ const protocolColorMap = {
                 </div>
                 <button
                   v-if="editingNode.colorTag"
+                  type="button"
                   @click="editingNode.colorTag = null"
                   class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="清除颜色标记"
                 >
                   清除
                 </button>
@@ -275,6 +282,7 @@ const protocolColorMap = {
                 @focus="urlFocused = true"
                 @blur="urlFocused = false"
                 @input="$emit('input-url', $event)"
+                aria-label="节点链接"
                 class="flex-1 w-full bg-transparent border-0 focus:ring-0 dark:text-white placeholder-gray-400 text-sm font-mono resize-none py-3 pl-3 pr-20 min-h-[160px]"
                 placeholder="输入单个链接，或粘贴多行链接批量导入..."
               ></textarea>

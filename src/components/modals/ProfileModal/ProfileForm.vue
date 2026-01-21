@@ -88,6 +88,7 @@ const emit = defineEmits(['toggle-advanced']);
       type="button" 
       @click="emit('toggle-advanced')"
       class="flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 focus:outline-hidden"
+      :aria-expanded="showAdvanced"
     >
       <span>高级设置</span>
       <svg :class="{ 'rotate-180': showAdvanced }" class="w-4 h-4 ml-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">

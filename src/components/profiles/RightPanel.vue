@@ -72,7 +72,11 @@ onUnmounted(() => {
 
       <div class="mb-4 list-item-animation" style="--delay-index: 1">
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">1. 选择订阅内容</label>
-        <select v-model="selectedId" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white input-enhanced">
+        <select
+          v-model="selectedId"
+          class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:text-white input-enhanced"
+          aria-label="选择订阅内容"
+        >
             <option value="default">默认订阅 (全部启用节点)</option>
             <option v-for="profile in profiles" :key="profile.id" :value="profile.customId || profile.id">
                 {{ profile.name }}
@@ -84,6 +88,7 @@ onUnmounted(() => {
         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">2. 选择格式</label>
         <div class="grid grid-cols-3 gap-2">
             <button
+              type="button"
               v-for="(format, index) in formats"
               :key="format"
               @click="selectedFormat = format"
@@ -94,6 +99,7 @@ onUnmounted(() => {
                   ? 'bg-indigo-600 text-white shadow-md'
                   : 'bg-gray-200/80 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-300/80 dark:hover:bg-gray-600/50'
               ]"
+              :aria-pressed="selectedFormat === format"
             >
               {{ format }}
             </button>
@@ -106,6 +112,7 @@ onUnmounted(() => {
           :value="subLink"
           readonly
           :disabled="!isLinkValid"
+          aria-label="订阅链接"
           class="w-full text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800/50 rounded-lg pl-3 pr-10 py-2.5 focus:outline-hidden focus:ring-2 font-mono input-enhanced"
           :class="{
             'focus:ring-indigo-500': isLinkValid,
@@ -113,7 +120,14 @@ onUnmounted(() => {
             'text-red-500 dark:text-red-500': !isLinkValid
           }"
         />
-        <button @click="copyToClipboard" :disabled="!isLinkValid" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 transition-colors duration-200" :class="isLinkValid ? 'hover:text-indigo-500' : 'cursor-not-allowed'">
+        <button
+          type="button"
+          @click="copyToClipboard"
+          :disabled="!isLinkValid"
+          class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 transition-colors duration-200"
+          :class="isLinkValid ? 'hover:text-indigo-500' : 'cursor-not-allowed'"
+          aria-label="复制订阅链接"
+        >
             <Transition name="fade" mode="out-in">
                 <svg v-if="copied" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

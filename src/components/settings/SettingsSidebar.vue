@@ -20,7 +20,12 @@ const tabs = [
 
 <template>
   <nav class="grid grid-cols-2 gap-2 p-1 md:flex md:flex-col md:space-y-1 md:gap-0 md:p-0">
-    <button v-for="tab in tabs" :key="tab.id" @click="emit('update:activeTab', tab.id)"
+    <button
+      v-for="tab in tabs"
+      :key="tab.id"
+      type="button"
+      @click="emit('update:activeTab', tab.id)"
+      :aria-pressed="activeTab === tab.id"
       class="flex items-center justify-center md:justify-start px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200"
       :class="activeTab === tab.id
         ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
